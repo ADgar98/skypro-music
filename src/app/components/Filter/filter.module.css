@@ -21,6 +21,7 @@
   color: #ffffff;
 }
 
+
 .filter__button {
   /*composes: btn-text from '/src/UI/Button/button.module.css';*/
   font-style: normal;
@@ -31,8 +32,47 @@
   border-radius: 60px;
   padding: 6px 20px;
   color: #ffffff;
+  position: relative;
+  cursor: pointer;
 }
 
 .filter__button:not(:last-child) {
   margin-right: 10px;
+}
+
+.active{
+  border-color: #9A48F1;
+  color: #B672FF;
+}
+
+.filter__index{
+  position: absolute;
+  font-size: 13px;
+  font-weight: 400;
+  color: white;
+  z-index: 2;
+  background-color: #AD61FF;
+  border-radius: 26px;
+  width: 26px;
+  height: 26px;
+  top: -8px;
+  left: 137px;
+padding-top: 1px;
+padding-left: 9px;
+}
+
+.filterGenre__index{
+  position: absolute;
+  font-size: 13px;
+  font-weight: 400;
+  color: white;
+  z-index: 2;
+  background-color: #AD61FF;
+  border-radius: 26px;
+  width: 26px;
+  height: 26px;
+  top: -8px;
+  left: 80px;
+padding-top: 1px;
+padding-left: 9px;
 }

@@ -1,0 +1,44 @@
+.genreModalWinBox{
+    width: max-content;
+  max-width: 248px;
+  height: max-content;
+
+  padding: 34px;
+  background-color: #313131;
+  border-radius: 12px;
+  z-index: 2;
+  position: absolute;
+  top: 288px;
+  left: 780px;
+}
+
+.genreFilteredBox{
+    display: flex;
+  flex-direction: column;
+  row-gap: 28px;
+  color: white;
+  font-weight: 400;
+  font-size: 20px;
+  max-height: 237px;
+  overflow-y: auto;
+  padding-right: 67px;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+    height: 64px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: rgba(75, 73, 73, 1);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: white;
+  }
+}
+
+.genreFilteredP:hover {
+  text-decoration: underline;
+  color: #b672ff;
+  cursor: pointer;
+}
