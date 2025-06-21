@@ -21,6 +21,15 @@
   color: #ffffff;
 }
 
+.filter__container{
+  position: relative;
+}
+
+.filterbox{
+  position: absolute;
+  top: 49px;
+}
+
 
 .filter__button {
   /*composes: btn-text from '/src/UI/Button/button.module.css';*/
@@ -32,7 +41,6 @@
   border-radius: 60px;
   padding: 6px 20px;
   color: #ffffff;
-  position: relative;
   cursor: pointer;
 }
 
@@ -45,7 +53,7 @@
   color: #B672FF;
 }
 
-.filter__index{
+/* .filter__index{
   position: absolute;
   font-size: 13px;
   font-weight: 400;
@@ -75,4 +83,4 @@ padding-left: 9px;
   left: 80px;
 padding-top: 1px;
 padding-left: 9px;
-}
+} */
