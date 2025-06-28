@@ -1,0 +1,25 @@
+.dateModalWinBox{
+    width: max-content;
+  max-width: 248px;
+  height: max-content;
+
+  padding: 34px;
+  background-color: #313131;
+  border-radius: 12px;
+  z-index: 2;
+
+}
+
+.dateFilteredBox{
+    display: flex;
+    flex-direction: column;
+    row-gap: 28px;
+    color: white;
+    font-size: 20px;
+}
+
+.dateFilteredP:hover {
+  text-decoration: underline;
+  color: #b672ff;
+  cursor: pointer;
+}

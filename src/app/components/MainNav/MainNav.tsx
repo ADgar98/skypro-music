@@ -1,8 +1,15 @@
+'use client'
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./mainNav.module.css";
+import { useState } from "react";
 
 export default function MainNav() {
+  const [openModWin, setOpenModWin] = useState<boolean>(false)
+
+  const clickOnBurger = () => {
+    setOpenModWin(prev => !prev)
+  }
     return(
         <nav className={styles.main__nav}>
             <div className={styles.nav__logo}>
@@ -15,12 +22,13 @@ export default function MainNav() {
                 alt={'logo'}
               />
             </div>
-            <div className={styles.nav__burger}>
+            <div onClick={clickOnBurger} className={styles.nav__burger}>
               <span className={styles.burger__line}></span>
               <span className={styles.burger__line}></span>
               <span className={styles.burger__line}></span>
             </div>
-            <div className={styles.nav__menu}>
+            {openModWin && (
+              <div className={styles.nav__menu}>
               <ul className={styles.menu__list}>
                 <li className={styles.menu__item}>
                   {/*TODO: a -> Link*/}
@@ -40,6 +48,7 @@ export default function MainNav() {
                 </li>
               </ul>
             </div>
+            )}
           </nav>
     )
 }
