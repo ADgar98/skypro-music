@@ -72,6 +72,7 @@
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
+  cursor: pointer;
 }
 
 .player__btnPrevSvg {
@@ -106,6 +107,7 @@
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
+  cursor: pointer;
 }
 
 .player__btnNextSvg {
@@ -133,6 +135,13 @@
   stroke: #696969;
 }
 
+.activeLoop{
+  fill: transparent;
+  stroke: #FFFFFF;
+}
+
+
+
 .player__btnShuffle {
   padding: 5px;
   display: -webkit-box;
@@ -148,6 +157,11 @@
   height: 12px;
   fill: transparent;
   stroke: #696969;
+}
+
+.activeShuffle{
+  fill: transparent;
+  stroke: #FFFFFF;
 }
 
 .player__trackPlay {
@@ -262,6 +276,7 @@
   -ms-flex-align: center;
   align-items: center;
   padding: 0 92px 0 0;
+  position: relative;
 }
 
 .volume__content {
@@ -360,4 +375,11 @@
   border: 0;
   opacity: 0;
   pointer-events: none;
+}
+
+.playingTime{
+  position: absolute;
+  color: #FFFFFF;
+  top: -35px;
+  right: 90px;
 }

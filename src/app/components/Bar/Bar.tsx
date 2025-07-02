@@ -3,15 +3,31 @@ import Link from 'next/link';
 import styles from './bar.module.css';
 import classNames from 'classnames';
 import { useAppDispatch, useAppSelector } from '@/store/store';
-import { useEffect, useRef } from 'react';
-import { setIsPlay } from '@/store/features/trackSlice';
+import { useEffect, useRef, useState } from 'react';
+import {
+  setIsPlay,
+  setNextTrack,
+  setPrevTrack,
+  toggleShuffle,
+} from '@/store/features/trackSlice';
+import { getTimePanel } from '@/utils/helpers';
+import ProgressBar from '../ProgressBar/ProgressBar';
 
 export default function Bar() {
   const currentTrack = useAppSelector((state) => state.tracks.currentTrack);
   const dispatch = useAppDispatch();
   const isPlay = useAppSelector((state) => state.tracks.isPlay);
+  const isSuffle = useAppSelector((state) => state.tracks.isShuffle);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  
+  const [isLoop, setIsLoop] = useState(false);
+  const [playingTime, setPlayingTime] = useState('');
+  const [isLoadedTrack, setIsLoadedTrack] = useState(false);
+  const [volume, setVolume] = useState(0.5);
+
+  useEffect(() => {
+    setIsLoadedTrack(false);
+  }, [currentTrack]);
+
   const playTrack = () => {
     if (audioRef.current) {
       audioRef.current.play();
@@ -26,27 +42,95 @@ export default function Bar() {
     }
   };
 
- useEffect(() => {
+  const repeatTrack = () => {
+    setIsLoop((prev) => !prev);
+  };
+
+  const onTimeUpdate = () => {
+    if (audioRef.current) {
+      const timePanel = getTimePanel(
+        audioRef.current.currentTime,
+        audioRef.current.duration,
+      );
+      if (timePanel !== undefined) {
+        setPlayingTime(timePanel);
+      }
+    }
+  };
+
+  const onLoadedMetadata = () => {
+    if (audioRef.current) {
+      console.log('start');
+      audioRef.current.play();
+      dispatch(setIsPlay(true));
+      setIsLoadedTrack(true);
+    }
+  };
+
+  const changeVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setVolume(Number(e.target.value));
+    if (audioRef.current) {
+      audioRef.current.volume = volume / 100;
+    }
+  };
+
+  const progressLine = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (audioRef.current) {
+      const inputTime = Number(e.target.value);
+      audioRef.current.currentTime = inputTime;
+    }
+  };
+
+  const onNextTrack = () => {
+    dispatch(setNextTrack());
+  };
+
+  const onPrevTrack = () => {
+    dispatch(setPrevTrack());
+  };
+
+  const onToggleShuffle = () => {
+    dispatch(toggleShuffle());
+  };
+
+  const onEndedPlay = () => {
+    dispatch(setNextTrack())
+  } 
+
+  useEffect(() => {
     if (isPlay && audioRef.current && currentTrack) {
       playTrack();
     }
   }, [isPlay, currentTrack]);
 
-if (!currentTrack) {
+  if (!currentTrack) {
     return <></>;
   }
 
-
-
   return (
     <div className={styles.bar}>
-      <audio className={styles.visuallyHidden} controls ref={audioRef} src={currentTrack?.track_file}></audio>
+      <audio
+        className={styles.visuallyHidden}
+        controls
+        ref={audioRef}
+        src={currentTrack?.track_file}
+        loop={isLoop}
+        onTimeUpdate={onTimeUpdate}
+        onLoadedMetadata={onLoadedMetadata}
+        onEnded={onEndedPlay}
+      ></audio>
       <div className={styles.bar__content}>
-        <div className={styles.bar__playerProgress}></div>
+        <ProgressBar
+          max={audioRef.current?.duration || 0}
+          step={0.1}
+          readOnly={isLoadedTrack}
+          value={audioRef.current?.currentTime || 0}
+          onChange={progressLine}
+        />
         <div className={styles.bar__playerBlock}>
           <div className={styles.bar__player}>
             <div className={styles.player__controls}>
-              <div className={styles.player__btnPrev}>
+              <div onClick={onPrevTrack} className={styles.player__btnPrev}>
                 <svg className={styles.player__btnPrevSvg}>
                   <use xlinkHref="/img/icon/sprite.svg#icon-prev"></use>
                 </svg>
@@ -71,25 +155,39 @@ if (!currentTrack) {
                   </svg>
                 </div>
               )}
-              <div className={styles.player__btnNext}>
+              <div onClick={onNextTrack} className={styles.player__btnNext}>
                 <svg className={styles.player__btnNextSvg}>
                   <use xlinkHref="/img/icon/sprite.svg#icon-next"></use>
                 </svg>
               </div>
               <div
+                onClick={repeatTrack}
                 className={classNames(styles.player__btnRepeat, styles.btnIcon)}
               >
-                <svg className={styles.player__btnRepeatSvg}>
+                <svg
+                  className={
+                    isLoop
+                      ? `${styles.player__btnRepeatSvg} ${styles.activeLoop}`
+                      : styles.player__btnRepeatSvg
+                  }
+                >
                   <use xlinkHref="/img/icon/sprite.svg#icon-repeat"></use>
                 </svg>
               </div>
               <div
+                onClick={onToggleShuffle}
                 className={classNames(
                   styles.player__btnShuffle,
                   styles.btnIcon,
                 )}
               >
-                <svg className={styles.player__btnShuffleSvg}>
+                <svg
+                  className={
+                    isSuffle
+                      ? `${styles.player__btnShuffleSvg } ${styles.activeShuffle}`
+                      : styles.player__btnShuffleSvg
+                  }
+                >
                   <use xlinkHref="/img/icon/sprite.svg#icon-shuffle"></use>
                 </svg>
               </div>
@@ -153,8 +251,15 @@ if (!currentTrack) {
                   )}
                   type="range"
                   name="range"
+                  onChange={changeVolume}
                 />
               </div>
+              {isLoadedTrack && (
+                <div className={styles.playingTime}>{playingTime}</div>
+              )}
+              {!isLoadedTrack && (
+                <div className={styles.playingTime}>Загружается...</div>
+              )}
             </div>
           </div>
         </div>
