@@ -1,22 +1,52 @@
-import Link from 'next/link'
-import styles from './playlistItem.module.css'
-import { data } from '@/data'
-import { TrackType } from '@/sherdTypes/sheredTypes'
+'use client';
+
+import Link from 'next/link';
+import styles from './playlistItem.module.css';
+import { TrackType } from '@/sherdTypes/sheredTypes';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+import { setCurrentTrack, setIsPlay } from '@/store/features/trackSlice';
+import classNames from 'classnames';
+
 export default function PlaylistItem() {
-const formatTime = (seconds: number): string => {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-};
-return (
+  const dispatch = useAppDispatch();
+  const allTracks = useAppSelector((state) => state.tracks.allTracks);
+  const isPlay = useAppSelector((state) => state.tracks.isPlay);
+  const currentTrack = useAppSelector((state) => state.tracks.currentTrack);
+
+  if (!allTracks) {
+    return <></>;
+  }
+
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
+
+  const onClickTrack = (track: TrackType) => {
+    dispatch(setCurrentTrack(track));
+    dispatch(setIsPlay(true))
+  };
+
+  return (
     <>
-      {data.map((track: TrackType) => (
-        <div key={track._id} className={styles.playlist__item}>
+      {allTracks.map((track: TrackType) => (
+        <div
+          key={track._id}
+          onClick={() => onClickTrack(track)}
+          className={styles.playlist__item}
+        >
           <div className={styles.playlist__track}>
             <div className={styles.track__title}>
               <div className={styles.track__titleImage}>
-                <svg className={styles.track__titleSvg}>
-                  <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
+                <svg
+                  className={classNames(styles.track__titleSvg, {
+                    [styles.activeTrack]: isPlay && currentTrack?._id === track._id,
+                    [styles.setTrack]: !isPlay && currentTrack?._id === track._id,
+                  })}
+                >
+                  {currentTrack?._id != track._id && (<use xlinkHref="/img/icon/sprite.svg#icon-note"></use>)}
+                  
                 </svg>
               </div>
               <div>
@@ -39,7 +69,9 @@ return (
               <svg className={styles.track__timeSvg}>
                 <use xlinkHref="/img/icon/sprite.svg#icon-like"></use>
               </svg>
-              <span className={styles.track__timeText}>{formatTime(track.duration_in_seconds)}</span>
+              <span className={styles.track__timeText}>
+                {formatTime(track.duration_in_seconds)}
+              </span>
             </div>
           </div>
         </div>

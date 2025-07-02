@@ -121,3 +121,34 @@
   text-align: right;
   color: #696969;
 }
+
+.activeTrack {
+  width: 10px;
+  height: 10px;
+  background-color: #b672ff;
+  border-radius: 50%;
+  animation: pulse 1.2s infinite ease-in-out;
+}
+
+.setTrack {
+  width: 10px;
+  height: 10px;
+  background-color: #b672ff;
+  border-radius: 50%;
+  
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

@@ -7,4 +7,10 @@
   -ms-flex-direction: column;
   flex-direction: column;
   overflow-y: auto;
+  max-height: calc(100vh - 407px);
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+.content__playlist::-webkit-scrollbar {
+  display: none; /* Chrome, Edge, Safari */
 }
