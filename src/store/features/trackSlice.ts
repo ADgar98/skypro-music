@@ -40,9 +40,9 @@ const trackSlice = createSlice({
         const curIndex = allPLaylist.findIndex(
           (el) => el._id === state.currentTrack?._id,
         );
-        const lastIndex = state.allTracks.length - 1;
-        if (curIndex === lastIndex && allPLaylist != state.shuffledPlaylist) {
-          return;
+        const nextIndex = curIndex + 1;
+        if (nextIndex >= allPLaylist.length) {
+          return
         }
         const nextTrackIndex = curIndex + 1;
         state.currentTrack = allPLaylist[nextTrackIndex];
@@ -55,8 +55,9 @@ const trackSlice = createSlice({
         const curIndex = allPLaylist.findIndex(
           (el) => el._id === state.currentTrack?._id,
         );
-        if (curIndex === 0 && allPLaylist != state.shuffledPlaylist) {
-          return;
+        const lastIndex = curIndex - 1;
+        if (lastIndex < 0) {
+          return
         }
         const nextTrackIndex = curIndex - 1;
         state.currentTrack = allPLaylist[nextTrackIndex];

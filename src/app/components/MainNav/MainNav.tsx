@@ -42,7 +42,7 @@ export default function MainNav() {
                   </Link>
                 </li>
                 <li className={styles.menu__item}>
-                  <Link href="/signin" className={styles.menu__link}>
+                  <Link href="/auth/signin" className={styles.menu__link}>
                     Войти
                   </Link>
                 </li>

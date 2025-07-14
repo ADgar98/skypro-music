@@ -8,13 +8,18 @@ import { setAllTracks, setCurrentTrack, setIsPlay } from '@/store/features/track
 import classNames from 'classnames';
 import { formatTime } from '@/utils/helpers';
 
-export default function PlaylistItem() {
+interface PlaylistItemProps {
+  tracks: TrackType[];
+}
+
+export default function PlaylistItem({tracks}: PlaylistItemProps) {
   const dispatch = useAppDispatch();
-  const allTracks = useAppSelector((state) => state.tracks.allTracks);
+  // const allTracks = useAppSelector((state) => state.tracks.allTracks);
   const isPlay = useAppSelector((state) => state.tracks.isPlay);
   const currentTrack = useAppSelector((state) => state.tracks.currentTrack);
 
-  if (!allTracks) {
+
+  if (!tracks) {
     return <></>;
   }
 
@@ -22,13 +27,15 @@ export default function PlaylistItem() {
 
   const onClickTrack = (track: TrackType) => {
     dispatch(setCurrentTrack(track));
-    dispatch(setAllTracks(allTracks))
+    dispatch(setAllTracks(tracks))
     dispatch(setIsPlay(true))
   };
 
   return (
     <>
-      {allTracks.map((track: TrackType) => (
+    
+
+      {tracks.map((track: TrackType) => (
         <div
           key={track._id}
           onClick={() => onClickTrack(track)}
