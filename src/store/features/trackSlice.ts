@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TrackType } from '../../sherdTypes/sheredTypes';
+import { TrackType, UserInfo } from '../../sherdTypes/sheredTypes';
 
 type initialStateType = {
   currentTrack: TrackType | null;
@@ -7,6 +7,7 @@ type initialStateType = {
   shuffledPlaylist: TrackType[];
   isPlay: boolean;
   isShuffle: boolean;
+  userData: UserInfo | null;
 };
 
 const initialState: initialStateType = {
@@ -15,6 +16,7 @@ const initialState: initialStateType = {
   isPlay: false,
   isShuffle: false,
   shuffledPlaylist: [],
+  userData: null,
 };
 
 const trackSlice = createSlice({
@@ -27,6 +29,9 @@ const trackSlice = createSlice({
     setAllTracks: (state, action: PayloadAction<TrackType[]>) => {
       state.allTracks = action.payload;
       state.shuffledPlaylist = [...state.allTracks].sort(() => Math.random() - 0.5)
+    },
+    setUserInfo: (state, action: PayloadAction<UserInfo>) => {
+state.userData = action.payload;
     },
     setIsPlay: (state, action: PayloadAction<boolean>) => {
       state.isPlay = action.payload;
@@ -73,5 +78,6 @@ export const {
   setNextTrack,
   setPrevTrack,
   toggleShuffle,
+  setUserInfo,
 } = trackSlice.actions;
 export const trackSliceReducer = trackSlice.reducer;

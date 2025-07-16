@@ -1,12 +1,19 @@
+'use client'
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./mainSidebar.module.css";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { setUserInfo } from "@/store/features/trackSlice";
 export default function MainSidebar() {
+  const dispatch = useAppDispatch();
+  const userInfo = useAppSelector((state) => state.tracks.userData);
     return(
         <div className={styles.main__sidebar}>
             <div className={styles.sidebar__personal}>
-              <p className={styles.sidebar__personalName}>Sergey.Ivanov</p>
-              <div className={styles.sidebar__icon}>
+              <p className={styles.sidebar__personalName}>{userInfo?.username}</p>
+              <div onClick={() => {
+                dispatch(setUserInfo(null))
+              }} className={styles.sidebar__icon}>
                 <svg>
                   <use xlinkHref="/img/icon/sprite.svg#logout"></use>
                 </svg>

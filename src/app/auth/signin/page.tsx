@@ -6,9 +6,11 @@ import classNames from 'classnames';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+import { setUserInfo } from '@/store/features/trackSlice';
 
 
 export default function Signin() {
@@ -18,6 +20,9 @@ export default function Signin() {
   });
   const [error, setError] = useState('');
   const router = useRouter()
+
+  const dispatch = useAppDispatch();
+  const userInfo = useAppSelector((state) => state.tracks.userData);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -41,6 +46,7 @@ export default function Signin() {
     try {
       const response = await fetchSignIn(formData);
       if (response) {
+        dispatch(setUserInfo(response.data))
         router.push('/music/main')
       }
     } catch (error) {
@@ -56,6 +62,11 @@ export default function Signin() {
       }
     }
   };
+
+  useEffect(() => {
+    console.log(userInfo);
+    
+  }, [userInfo])
 
   
 
