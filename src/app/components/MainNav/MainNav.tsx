@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import styles from "./mainNav.module.css";
 import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 
 export default function MainNav() {
   const [openModWin, setOpenModWin] = useState<boolean>(false)
@@ -10,6 +11,10 @@ export default function MainNav() {
   const clickOnBurger = () => {
     setOpenModWin(prev => !prev)
   }
+
+  const dispatch = useAppDispatch();
+    const userInfo = useAppSelector((state) => state.tracks.userData);
+
     return(
         <nav className={styles.main__nav}>
             <div className={styles.nav__logo}>
@@ -42,9 +47,13 @@ export default function MainNav() {
                   </Link>
                 </li>
                 <li className={styles.menu__item}>
-                  <Link href="/signin" className={styles.menu__link}>
+                  {userInfo && <Link href="/auth/signin" className={styles.menu__link}>
+                    Выйти
+                  </Link>}
+                  {!userInfo && <Link href="/auth/signin" className={styles.menu__link}>
                     Войти
-                  </Link>
+                  </Link>}
+                  
                 </li>
               </ul>
             </div>
