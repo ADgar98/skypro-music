@@ -6,16 +6,25 @@ import { useParams } from 'next/navigation';
 import classNames from 'classnames';
 import PlaylistItem from '@/app/components/PlaylistItem/PlaylistItem';
 import { useEffect, useState } from 'react';
-import { fetchCategoryMusic, fetchMusic } from '@/api';
+import { favoriteTracks, fetchCategoryMusic, fetchMusic } from '@/api';
 
 import { TrackType } from '@/sherdTypes/sheredTypes';
 import { AxiosError } from 'axios';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+// import { setFavoriteTracks } from '@/store/features/trackSlice';
+import { withReauth } from '@/utils/withReauth';
+
+
 
 export default function CategoryPage() {
   const params = useParams<{ id: string }>();
   const [tracks, setTracks] = useState<TrackType[]>([]);
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useAppDispatch()
+  const accessToken = useAppSelector((state) => state.auth.access)
+  const refresh = useAppSelector((state) => state.auth.refresh)
+
   let playlistName;
 
   switch (params.id) {
@@ -28,12 +37,44 @@ export default function CategoryPage() {
     case '3':
       playlistName = 'Инди-заряд';
       break;
+      case '4':
+      playlistName = 'Мой плейлист';
+      break;
     default:
       alert('Нет таких значений');
   }
 
   useEffect(() => {
-    if (params.id) {
+    if (params.id === "4") {
+    const fetchFavoriteTracks = async () => {
+      try {
+        const favorite = await withReauth(
+          (newToken) => favoriteTracks(newToken || accessToken),
+          refresh,
+          dispatch
+        );
+        setTracks(favorite.data);
+        console.log(favorite.data);
+      } catch (error) {
+        if (error instanceof AxiosError) {
+                  if (error.response) {
+                    setError(error.response.data.message);
+                    
+                  } else if (error.request) {
+                    setError('отсутствует интернет, попробуйте позже');
+                  } else {
+                    setError('неизвестная, попробуйте позже');
+                  }
+                }
+      } finally {
+        setIsLoading(false)
+      }
+    };
+
+    fetchFavoriteTracks();
+  }
+
+    else if (params.id === '1' || params.id === '2' || params.id === '3') {
       const categoryId = String(Number(params.id) + 1);
 
       const loadData = async () => {
@@ -70,7 +111,7 @@ export default function CategoryPage() {
       } 
       loadData();
     }
-  }, []);
+  }, [dispatch]);
 
  
   return (
