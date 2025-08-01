@@ -2,10 +2,10 @@
 import './page.css';
 import styles from "./page.module.css";
 
-import MainNav from './components/MainNav/MainNav';
-import Centerblock from './components/Centerblock/Centerblock';
-import MainSidebar from './components/MainSidebar/MainSidebar';
-import Bar from './components/Bar/Bar';
+import MainNav from '../../components/MainNav/MainNav';
+import Centerblock from '../../components/Centerblock/Centerblock';
+import MainSidebar from '../../components/MainSidebar/MainSidebar';
+import Bar from '../../components/Bar/Bar';
 
 export default function Home() {
   return (

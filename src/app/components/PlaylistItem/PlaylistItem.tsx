@@ -4,33 +4,38 @@ import Link from 'next/link';
 import styles from './playlistItem.module.css';
 import { TrackType } from '@/sherdTypes/sheredTypes';
 import { useAppDispatch, useAppSelector } from '@/store/store';
-import { setCurrentTrack, setIsPlay } from '@/store/features/trackSlice';
+import { setAllTracks, setCurrentTrack, setIsPlay } from '@/store/features/trackSlice';
 import classNames from 'classnames';
+import { formatTime } from '@/utils/helpers';
 
-export default function PlaylistItem() {
+interface PlaylistItemProps {
+  tracks: TrackType[];
+}
+
+export default function PlaylistItem({tracks}: PlaylistItemProps) {
   const dispatch = useAppDispatch();
-  const allTracks = useAppSelector((state) => state.tracks.allTracks);
+  // const allTracks = useAppSelector((state) => state.tracks.allTracks);
   const isPlay = useAppSelector((state) => state.tracks.isPlay);
   const currentTrack = useAppSelector((state) => state.tracks.currentTrack);
 
-  if (!allTracks) {
+
+  if (!tracks) {
     return <></>;
   }
 
-  const formatTime = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-  };
+  
 
   const onClickTrack = (track: TrackType) => {
     dispatch(setCurrentTrack(track));
+    dispatch(setAllTracks(tracks))
     dispatch(setIsPlay(true))
   };
 
   return (
     <>
-      {allTracks.map((track: TrackType) => (
+    
+
+      {tracks.map((track: TrackType) => (
         <div
           key={track._id}
           onClick={() => onClickTrack(track)}

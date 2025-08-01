@@ -1,11 +1,17 @@
 export type TrackType = {
-   _id: number;
-   name: string;
-   author: string;
-   release_date: string;
-   genre: string[];
-   duration_in_seconds: number;
-   album: string;
-   track_file: string;
-   stared_user: string[];
-}
+  _id: number;
+  name: string;
+  author: string;
+  release_date: string;
+  genre: string[];
+  duration_in_seconds: number;
+  album: string;
+  track_file: string;
+  stared_user: string[];
+};
+
+export type UserInfo = {
+  email: string;
+  username: string;
+  _id: number;
+} | null;

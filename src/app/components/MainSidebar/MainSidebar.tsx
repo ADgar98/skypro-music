@@ -1,12 +1,19 @@
+'use client'
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./mainSidebar.module.css";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { setUserInfo } from "@/store/features/trackSlice";
 export default function MainSidebar() {
+  const dispatch = useAppDispatch();
+  const userInfo = useAppSelector((state) => state.tracks.userData);
     return(
         <div className={styles.main__sidebar}>
             <div className={styles.sidebar__personal}>
-              <p className={styles.sidebar__personalName}>Sergey.Ivanov</p>
-              <div className={styles.sidebar__icon}>
+              <p className={styles.sidebar__personalName}>{userInfo?.username}</p>
+              <div onClick={() => {
+                dispatch(setUserInfo(null))
+              }} className={styles.sidebar__icon}>
                 <svg>
                   <use xlinkHref="/img/icon/sprite.svg#logout"></use>
                 </svg>
@@ -15,7 +22,7 @@ export default function MainSidebar() {
             <div className={styles.sidebar__block}>
               <div className={styles.sidebar__list}>
                 <div className={styles.sidebar__item}>
-                  <Link className={styles.sidebar__link} href="#">
+                  <Link className={styles.sidebar__link} href="/music/category/1">
                     <Image
                       className={styles.sidebar__img}
                       src="/img/playlist01.png"
@@ -26,7 +33,7 @@ export default function MainSidebar() {
                   </Link>
                 </div>
                 <div className={styles.sidebar__item}>
-                  <Link className={styles.sidebar__link} href="#">
+                  <Link className={styles.sidebar__link} href="/music/category/2">
                     <Image
                       className={styles.sidebar__img}
                       src="/img/playlist02.png"
@@ -37,7 +44,7 @@ export default function MainSidebar() {
                   </Link>
                 </div>
                 <div className={styles.sidebar__item}>
-                  <Link className={styles.sidebar__link} href="#">
+                  <Link className={styles.sidebar__link} href="/music/category/3">
                     <Image
                       className={styles.sidebar__img}
                       src="/img/playlist03.png"

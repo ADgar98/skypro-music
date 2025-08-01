@@ -4,8 +4,14 @@ import MusicianModalWin from '../MusicianModalWin/MusicianModalWin';
 import styles from './filter.module.css';
 import DateFilterModWin from '../DateFilterModWin/DateFilterModWin';
 import GenreFilterModWin from '../GenreFilterModWin/GenreFilterModWin';
+import { TrackType } from '@/sherdTypes/sheredTypes';
 
-export default function Filter() {
+interface PlaylistItemProps {
+  tracks: TrackType[];
+}
+
+export default function Filter({tracks}: PlaylistItemProps) {
+  
   const [musicianWin, setMusicianWin] = useState<boolean>(false);
   const [dateWin, setDateWin] = useState<boolean>(false);
   const [genreWin, setGenreWin] = useState<boolean>(false);
@@ -39,7 +45,7 @@ export default function Filter() {
           исполнителю
         </div>
         <div className={styles.filterbox}>
-          {musicianWin && <MusicianModalWin />}
+          {musicianWin && <MusicianModalWin tracks={tracks}/>}
         </div>
       </div>
 
@@ -64,7 +70,7 @@ export default function Filter() {
           жанру
         </div>
         <div className={styles.filterbox}>
-          {genreWin && <GenreFilterModWin />}
+          {genreWin && <GenreFilterModWin tracks={tracks}/>}
         </div>
       </div>
     </div>
