@@ -28,7 +28,7 @@ export const useLikeTrack = (track: TrackType | null): returnTypeHook => {
     }
 
     const actionApi = isLike ? removeLike : addLike;
-    const actionSlice = isLike ? addLikedTracks : addLikedTracks;
+    const actionSlice = isLike ? removeLikedTracks : addLikedTracks;
 
     setIsLoading(true);
     setErrorMsg(null);

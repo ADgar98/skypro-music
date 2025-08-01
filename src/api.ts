@@ -84,15 +84,17 @@ export const getToken = async (data: authInputs): Promise<tokenType> => {
 export const refreshToken = async (
   refresh: string,
 ): Promise<{ access: string }> => {
+
   const res = await axios.post(
     'https://webdev-music-003b5b991590.herokuapp.com/user/token/refresh/',
-    refresh,
+    {refresh},
     {
       headers: {
         'Content-Type': 'application/json',
       },
     },
   );
+  
   return res.data;
 };
 

@@ -49,7 +49,7 @@ export default function MainNav() {
             </li>
             {userInfo && (
               <li className={styles.menu__item}>
-                <Link href="/music/category/4" className={styles.menu__link}>
+                <Link href="/music/favorit" className={styles.menu__link}>
                   Мой плейлист
                 </Link>
               </li>

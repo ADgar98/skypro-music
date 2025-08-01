@@ -4,28 +4,76 @@ import styles from './centerblock.module.css';
 import Filter from '../Filter/Filter';
 
 import PlaylistItem from '../PlaylistItem/PlaylistItem';
-import { useAppDispatch } from '@/store/store';
+import { useAppDispatch, useAppSelector } from '@/store/store';
 import { useEffect, useState } from 'react';
-import { fetchMusic } from '@/api';
-import { setAllTracks } from '@/store/features/trackSlice';
+import { favoriteTracks, fetchMusic } from '@/api';
+import { setAllTracks, setFavoriteTracks } from '@/store/features/trackSlice';
 import { TrackType } from '@/sherdTypes/sheredTypes';
+import { withReauth } from '@/utils/withReauth';
+import { AxiosError } from 'axios';
 
 export default function Centerblock() {
   const dispatch = useAppDispatch();
+  const favorite= useAppSelector((state) => state.tracks.favoriteTracks)
   const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
-  const [tracks, setTracks] = useState<TrackType[]>([])
+  const [error, setError] = useState('');
 
+  const [tracks, setTracks] = useState<TrackType[]>([]);
+
+  const accessToken = useAppSelector((state) => state.auth.access);
+  const refreshT = useAppSelector((state) => state.auth.refresh);
+
+  useEffect(() => {
+    const fetchFavoriteTracks = async () => {
+     console.log(refreshT);
+     
+      try {
+        const favorite = await withReauth(
+          (newToken) => favoriteTracks(newToken || accessToken),
+          refreshT,
+          dispatch,
+        );
+        dispatch(setFavoriteTracks(favorite.data));
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          if (error.response) {
+            setError(error.response.data.message);
+          } else if (error.request) {
+            setError('отсутствует интернет, попробуйте позже');
+          } else {
+            setError('неизвестная, попробуйте позже');
+          }
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchFavoriteTracks();
+  }, [refreshT, dispatch]);
+
+  if (favorite) {
+    console.log(favorite);
+    
+  }
   useEffect(() => {
     const loadTracks = async () => {
       setIsLoading(true);
       try {
         const tracks = await fetchMusic();
         dispatch(setAllTracks(tracks));
-        setTracks(tracks)
+
+        setTracks(tracks);
       } catch (error) {
-        setIsError(true);
-        console.error('Не удалось загрузить треки', error);
+        if (error instanceof AxiosError) {
+          if (error.response) {
+            setError(error.response.data.message);
+          } else if (error.request) {
+            setError('отсутствует интернет, попробуйте позже');
+          } else {
+            setError('неизвестная, попробуйте позже');
+          }
+        }
       } finally {
         setIsLoading(false);
       }
@@ -33,6 +81,8 @@ export default function Centerblock() {
 
     loadTracks();
   }, [dispatch]);
+
+
 
   return (
     <div className={styles.centerblock}>
@@ -48,7 +98,7 @@ export default function Centerblock() {
         />
       </div>
       <h2 className={styles.centerblock__h2}>Треки</h2>
-      <Filter tracks={tracks}/>
+      <Filter tracks={tracks} />
       <div className={styles.centerblock__content}>
         <div className={styles.content__title}>
           <div className={classNames(styles.playlistTitle__col, styles.col01)}>
@@ -68,12 +118,8 @@ export default function Centerblock() {
         </div>
         <div className={styles.content__playlist}>
           {isLoading && <p className={styles.loading}>Загрузка...</p>}
-          {isError && (
-            <p className={styles.error}>
-              Ошибка при загрузке треков, попробуйте перезагрузить
-            </p>
-          )}
-          <PlaylistItem tracks={tracks}/>
+          {error && <p className={styles.error}>{error}</p>}
+          <PlaylistItem tracks={tracks} />
         </div>
       </div>
     </div>

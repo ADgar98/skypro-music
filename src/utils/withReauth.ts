@@ -11,6 +11,7 @@ export const withReauth = async <T>(
   try {
     // Пытаемся выполнить запрос
     return await apiFunction('');
+    
   } catch (error) {
     const axiosError = error as AxiosError;
 

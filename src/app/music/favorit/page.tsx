@@ -2,73 +2,52 @@
 
 import Filter from '@/app/components/Filter/Filter';
 import styles from './page.module.css';
-import { useParams } from 'next/navigation';
+
 import classNames from 'classnames';
 import PlaylistItem from '@/app/components/PlaylistItem/PlaylistItem';
 import { useEffect, useState } from 'react';
-import { fetchCategoryMusic, fetchMusic } from '@/api';
+import { favoriteTracks } from '@/api';
 
 import { TrackType } from '@/sherdTypes/sheredTypes';
 import { AxiosError } from 'axios';
-import { useInitAuth } from '@/hooks/useInitAuth';
-
+import { useAppDispatch, useAppSelector } from '@/store/store';
 // import { setFavoriteTracks } from '@/store/features/trackSlice';
-
+import { withReauth } from '@/utils/withReauth';
+import { setFavoriteTracks } from '@/store/features/trackSlice';
+import { useInitAuth } from '@/hooks/useInitAuth';
 
 
 
 export default function CategoryPage() {
-  useInitAuth();
-  const params = useParams<{ id: string }>();
+useInitAuth();
   const [tracks, setTracks] = useState<TrackType[]>([]);
   const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(true);
-  
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useAppDispatch()
+  const accessToken = useAppSelector((state) => state.auth.access)
+  const refresh = useAppSelector((state) => state.auth.refresh)
 
-  let playlistName;
 
-  switch (params.id) {
-    case '1':
-      playlistName = 'Плейлист дня';
-      break;
-    case '2':
-      playlistName = '100 танцевальных хитов';
-      break;
-    case '3':
-      playlistName = 'Инди-заряд';
-      break;
-      case '4':
-      playlistName = 'Мой плейлист';
-      break;
-    default:
-      alert('Нет таких значений');
-  }
+
 
   useEffect(() => {
 
-
-    if (params.id) {
-      const categoryId = String(Number(params.id) + 1);
-
-      const loadData = async () => {
-        setIsLoading(true)
-        try {
-          const [categoryData, tracksData] = await Promise.all([
-            fetchCategoryMusic(categoryId),
-            fetchMusic(),
-          ]);
-
-
-          const items = categoryData.data.items.map(Number)
-
-          const filtered = tracksData.filter((track: TrackType) =>
-            items.includes(Number(track._id)),
-          );
-          setTracks(filtered);
+if (!refresh || refresh === "") {
+  return
+}
     
-        } catch (error ) {
-
-          if (error instanceof AxiosError) {
+    const fetchFavoriteTracks = async () => {
+      setIsLoading(true)
+      try {
+        const favorite = await withReauth(
+          (newToken) => favoriteTracks(newToken || accessToken),
+          refresh,
+          dispatch
+        );
+        setTracks(favorite.data);
+        dispatch(setFavoriteTracks(favorite.data))
+      } catch (error) {
+        if (error instanceof AxiosError) {
                   if (error.response) {
                     setError(error.response.data.message);
                     
@@ -78,13 +57,13 @@ export default function CategoryPage() {
                     setError('неизвестная, попробуйте позже');
                   }
                 }
-        } finally {
+      } finally {
         setIsLoading(false)
       }
-      } 
-      loadData();
-    }
-  }, []);
+    };
+
+    fetchFavoriteTracks()
+  }, [refresh]);
 
  
   return (
@@ -100,7 +79,7 @@ export default function CategoryPage() {
           name="search"
         />
       </div>
-      <h2 className={styles.centerblock__h2}>{playlistName}</h2>
+      <h2 className={styles.centerblock__h2}>Мои треки</h2>
       <Filter tracks={tracks}/>
       <div className={styles.centerblock__content}>
         <div className={styles.content__title}>
