@@ -24,6 +24,11 @@ export default function Centerblock() {
   const refreshT = useAppSelector((state) => state.auth.refresh);
 
   useEffect(() => {
+
+    if (!refreshT || refreshT === "") {
+  return
+}
+
     const fetchFavoriteTracks = async () => {
      console.log(refreshT);
      
@@ -52,10 +57,7 @@ export default function Centerblock() {
     fetchFavoriteTracks();
   }, [refreshT, dispatch]);
 
-  if (favorite) {
-    console.log(favorite);
-    
-  }
+  
   useEffect(() => {
     const loadTracks = async () => {
       setIsLoading(true);

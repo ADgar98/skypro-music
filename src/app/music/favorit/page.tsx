@@ -8,7 +8,7 @@ import PlaylistItem from '@/app/components/PlaylistItem/PlaylistItem';
 import { useEffect, useState } from 'react';
 import { favoriteTracks } from '@/api';
 
-import { TrackType } from '@/sherdTypes/sheredTypes';
+
 import { AxiosError } from 'axios';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 // import { setFavoriteTracks } from '@/store/features/trackSlice';
@@ -20,14 +20,14 @@ import { useInitAuth } from '@/hooks/useInitAuth';
 
 export default function CategoryPage() {
 useInitAuth();
-  const [tracks, setTracks] = useState<TrackType[]>([]);
+
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch()
   const accessToken = useAppSelector((state) => state.auth.access)
   const refresh = useAppSelector((state) => state.auth.refresh)
 
-
+  const tracks = useAppSelector((state) => state.tracks.favoriteTracks)
 
 
   useEffect(() => {
@@ -44,7 +44,6 @@ if (!refresh || refresh === "") {
           refresh,
           dispatch
         );
-        setTracks(favorite.data);
         dispatch(setFavoriteTracks(favorite.data))
       } catch (error) {
         if (error instanceof AxiosError) {
@@ -63,7 +62,7 @@ if (!refresh || refresh === "") {
     };
 
     fetchFavoriteTracks()
-  }, [refresh]);
+  }, [refresh, dispatch]);
 
  
   return (
