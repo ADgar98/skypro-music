@@ -44,7 +44,7 @@ const trackSlice = createSlice({
     removeLikedTracks(state, action: PayloadAction<TrackType>) {
       const index = state.favoriteTracks.findIndex(track => track._id === action.payload._id);
       if (index !== -1) {
-        state.favoriteTracks.splice(index, 1); // Мутация, но Immer сделает это иммутабельно
+        state.favoriteTracks.splice(index, 1); 
       }
     },
 

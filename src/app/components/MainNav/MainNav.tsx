@@ -42,7 +42,6 @@ export default function MainNav() {
         <div className={styles.nav__menu}>
           <ul className={styles.menu__list}>
             <li className={styles.menu__item}>
-              {/*TODO: a -> Link*/}
               <Link href="/" className={styles.menu__link}>
                 Главное
               </Link>

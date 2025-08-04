@@ -1,15 +1,12 @@
 import { getUniqueValuesByKey } from '@/utils/helpers';
 import styles from './genreFilterModWin.module.css';
-// import { useAppSelector } from '@/store/store';
 import { TrackType } from '@/sherdTypes/sheredTypes';
 
 interface PlaylistItemProps {
   tracks: TrackType[];
 }
 
-export default function GenreFilterModWin({tracks}: PlaylistItemProps) {
-
-  // const allTracks = useAppSelector((state) => state.tracks.allTracks);
+export default function GenreFilterModWin({ tracks }: PlaylistItemProps) {
   const ArrOfGenre = getUniqueValuesByKey(tracks, 'genre');
 
   return (

@@ -135,12 +135,10 @@
   stroke: #696969;
 }
 
-.activeLoop{
+.activeLoop {
   fill: transparent;
-  stroke: #FFFFFF;
+  stroke: #ffffff;
 }
-
-
 
 .player__btnShuffle {
   padding: 5px;
@@ -159,9 +157,9 @@
   stroke: #696969;
 }
 
-.activeShuffle{
+.activeShuffle {
   fill: transparent;
-  stroke: #FFFFFF;
+  stroke: #ffffff;
 }
 
 .player__trackPlay {
@@ -377,13 +375,13 @@
   pointer-events: none;
 }
 
-.playingTime{
+.playingTime {
   position: absolute;
-  color: #FFFFFF;
+  color: #ffffff;
   top: -35px;
   right: 90px;
 }
 .likeSvg {
-    fill: #B672FF;  
-  stroke: #B672FF;  
+  fill: #b672ff;
+  stroke: #b672ff;
 }

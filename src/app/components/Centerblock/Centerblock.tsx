@@ -11,10 +11,11 @@ import { setAllTracks, setFavoriteTracks } from '@/store/features/trackSlice';
 import { TrackType } from '@/sherdTypes/sheredTypes';
 import { withReauth } from '@/utils/withReauth';
 import { AxiosError } from 'axios';
+import { Search } from '../Search/Search';
 
 export default function Centerblock() {
   const dispatch = useAppDispatch();
-  const favorite= useAppSelector((state) => state.tracks.favoriteTracks)
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -24,14 +25,12 @@ export default function Centerblock() {
   const refreshT = useAppSelector((state) => state.auth.refresh);
 
   useEffect(() => {
-
-    if (!refreshT || refreshT === "") {
-  return
-}
+    if (!refreshT || refreshT === '') {
+      return;
+    }
 
     const fetchFavoriteTracks = async () => {
-     console.log(refreshT);
-     
+
       try {
         const favorite = await withReauth(
           (newToken) => favoriteTracks(newToken || accessToken),
@@ -57,7 +56,6 @@ export default function Centerblock() {
     fetchFavoriteTracks();
   }, [refreshT, dispatch]);
 
-  
   useEffect(() => {
     const loadTracks = async () => {
       setIsLoading(true);
@@ -84,21 +82,9 @@ export default function Centerblock() {
     loadTracks();
   }, [dispatch]);
 
-
-
   return (
     <div className={styles.centerblock}>
-      <div className={styles.centerblock__search}>
-        <svg className={styles.search__svg}>
-          <use xlinkHref="/img/icon/sprite.svg#icon-search"></use>
-        </svg>
-        <input
-          className={styles.search__text}
-          type="search"
-          placeholder="Поиск"
-          name="search"
-        />
-      </div>
+      <Search tracks={tracks} setTracks={setTracks} />
       <h2 className={styles.centerblock__h2}>Треки</h2>
       <Filter tracks={tracks} />
       <div className={styles.centerblock__content}>

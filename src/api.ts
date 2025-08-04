@@ -84,23 +84,23 @@ export const getToken = async (data: authInputs): Promise<tokenType> => {
 export const refreshToken = async (
   refresh: string,
 ): Promise<{ access: string }> => {
-
   const res = await axios.post(
     'https://webdev-music-003b5b991590.herokuapp.com/user/token/refresh/',
-    {refresh},
+    { refresh },
     {
       headers: {
         'Content-Type': 'application/json',
       },
     },
   );
-  
+
   return res.data;
 };
 
 export const addLike = async (access: string, id: number) => {
   return await axios.post(
-    `https://webdev-music-003b5b991590.herokuapp.com/catalog/track/${id}/favorite/`, {},
+    `https://webdev-music-003b5b991590.herokuapp.com/catalog/track/${id}/favorite/`,
+    {},
     {
       headers: {
         Authorization: `Bearer ${access}`,
@@ -121,12 +121,13 @@ export const removeLike = async (access: string, id: number) => {
 };
 
 export const favoriteTracks = async (access: string) => {
-  const res = await axios.get("https://webdev-music-003b5b991590.herokuapp.com/catalog/track/favorite/all/",
+  const res = await axios.get(
+    'https://webdev-music-003b5b991590.herokuapp.com/catalog/track/favorite/all/',
     {
       headers: {
         Authorization: `Bearer ${access}`,
       },
     },
-  )
-  return res.data
-}
+  );
+  return res.data;
+};

@@ -12,18 +12,12 @@ import { TrackType } from '@/sherdTypes/sheredTypes';
 import { AxiosError } from 'axios';
 import { useInitAuth } from '@/hooks/useInitAuth';
 
-// import { setFavoriteTracks } from '@/store/features/trackSlice';
-
-
-
-
 export default function CategoryPage() {
   useInitAuth();
   const params = useParams<{ id: string }>();
   const [tracks, setTracks] = useState<TrackType[]>([]);
-  const [error, setError] = useState('')
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  
 
   let playlistName;
 
@@ -37,7 +31,7 @@ export default function CategoryPage() {
     case '3':
       playlistName = 'Инди-заряд';
       break;
-      case '4':
+    case '4':
       playlistName = 'Мой плейлист';
       break;
     default:
@@ -45,48 +39,41 @@ export default function CategoryPage() {
   }
 
   useEffect(() => {
-
-
     if (params.id) {
       const categoryId = String(Number(params.id) + 1);
 
       const loadData = async () => {
-        setIsLoading(true)
+        setIsLoading(true);
         try {
           const [categoryData, tracksData] = await Promise.all([
             fetchCategoryMusic(categoryId),
             fetchMusic(),
           ]);
 
-
-          const items = categoryData.data.items.map(Number)
+          const items = categoryData.data.items.map(Number);
 
           const filtered = tracksData.filter((track: TrackType) =>
             items.includes(Number(track._id)),
           );
           setTracks(filtered);
-    
-        } catch (error ) {
-
+        } catch (error) {
           if (error instanceof AxiosError) {
-                  if (error.response) {
-                    setError(error.response.data.message);
-                    
-                  } else if (error.request) {
-                    setError('отсутствует интернет, попробуйте позже');
-                  } else {
-                    setError('неизвестная, попробуйте позже');
-                  }
-                }
+            if (error.response) {
+              setError(error.response.data.message);
+            } else if (error.request) {
+              setError('отсутствует интернет, попробуйте позже');
+            } else {
+              setError('неизвестная, попробуйте позже');
+            }
+          }
         } finally {
-        setIsLoading(false)
-      }
-      } 
+          setIsLoading(false);
+        }
+      };
       loadData();
     }
   }, []);
 
- 
   return (
     <div className={styles.centerblock}>
       <div className={styles.centerblock__search}>
@@ -101,7 +88,7 @@ export default function CategoryPage() {
         />
       </div>
       <h2 className={styles.centerblock__h2}>{playlistName}</h2>
-      <Filter tracks={tracks}/>
+      <Filter tracks={tracks} />
       <div className={styles.centerblock__content}>
         <div className={styles.content__title}>
           <div className={classNames(styles.playlistTitle__col, styles.col01)}>
@@ -121,12 +108,8 @@ export default function CategoryPage() {
         </div>
         <div className={styles.content__playlist}>
           {isLoading && <p className={styles.loading}>Загрузка...</p>}
-          {error && (
-            <p className={styles.error}>
-              {error}
-            </p>
-          )}
-          <PlaylistItem tracks={tracks}/>
+          {error && <p className={styles.error}>{error}</p>}
+          <PlaylistItem tracks={tracks} />
         </div>
       </div>
     </div>

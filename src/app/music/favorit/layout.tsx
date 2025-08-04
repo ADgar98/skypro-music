@@ -19,7 +19,6 @@ export default function CategoryLayout({ children }: CategoryLayoutProps) {
           <MainSidebar />
           <Bar />
         </main>
-
         <footer className="footer"></footer>
       </div>
     </div>

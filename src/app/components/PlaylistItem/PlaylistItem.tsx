@@ -8,7 +8,6 @@ import {
   setIsPlay,
 } from '@/store/features/trackSlice';
 
-
 import { Track } from '../Track/Track';
 
 interface PlaylistItemProps {
@@ -18,9 +17,7 @@ interface PlaylistItemProps {
 export default function PlaylistItem({ tracks }: PlaylistItemProps) {
   const dispatch = useAppDispatch();
 
-
   const isPlay = useAppSelector((state) => state.tracks.isPlay);
-  
 
   if (!tracks) {
     return <></>;

@@ -10,8 +10,7 @@ interface PlaylistItemProps {
   tracks: TrackType[];
 }
 
-export default function Filter({tracks}: PlaylistItemProps) {
-  
+export default function Filter({ tracks }: PlaylistItemProps) {
   const [musicianWin, setMusicianWin] = useState<boolean>(false);
   const [dateWin, setDateWin] = useState<boolean>(false);
   const [genreWin, setGenreWin] = useState<boolean>(false);
@@ -45,7 +44,7 @@ export default function Filter({tracks}: PlaylistItemProps) {
           исполнителю
         </div>
         <div className={styles.filterbox}>
-          {musicianWin && <MusicianModalWin tracks={tracks}/>}
+          {musicianWin && <MusicianModalWin tracks={tracks} />}
         </div>
       </div>
 
@@ -70,7 +69,7 @@ export default function Filter({tracks}: PlaylistItemProps) {
           жанру
         </div>
         <div className={styles.filterbox}>
-          {genreWin && <GenreFilterModWin tracks={tracks}/>}
+          {genreWin && <GenreFilterModWin tracks={tracks} />}
         </div>
       </div>
     </div>
