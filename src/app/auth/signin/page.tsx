@@ -1,17 +1,20 @@
 'use client';
 
-import { fetchSignIn } from '@/api';
+import { fetchSignIn, getToken } from '@/api';
 import styles from './signin.module.css';
 import classNames from 'classnames';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
-import { useAppDispatch, useAppSelector } from '@/store/store';
-import { setUserInfo } from '@/store/features/trackSlice';
-
+import { useAppDispatch } from '@/store/store';
+import {
+  setAccessToken,
+  setRefreshToken,
+  setUserInfo,
+} from '@/store/features/authSlice';
 
 export default function Signin() {
   const [formData, setFormData] = useState({
@@ -19,10 +22,9 @@ export default function Signin() {
     password: '',
   });
   const [error, setError] = useState('');
-  const router = useRouter()
+  const router = useRouter();
 
   const dispatch = useAppDispatch();
-  const userInfo = useAppSelector((state) => state.tracks.userData);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -32,8 +34,6 @@ export default function Signin() {
       [name]: value,
     });
   };
-
-  
 
   const onSubmit = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -46,14 +46,16 @@ export default function Signin() {
     try {
       const response = await fetchSignIn(formData);
       if (response) {
-        dispatch(setUserInfo(response.data))
-        router.push('/music/main')
+        dispatch(setUserInfo(response.data.username));
+        const token = await getToken(formData);
+        dispatch(setAccessToken(token.access));
+        dispatch(setRefreshToken(token.refresh));
+        router.push('/music/main');
       }
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.response) {
           setError(error.response.data.message);
-          
         } else if (error.request) {
           setError('отсутствует интернет, попробуйте позже');
         } else {
@@ -62,13 +64,6 @@ export default function Signin() {
       }
     }
   };
-
-  useEffect(() => {
-    console.log(userInfo);
-    
-  }, [userInfo])
-
-  
 
   return (
     <>

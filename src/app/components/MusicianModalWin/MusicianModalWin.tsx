@@ -1,6 +1,5 @@
 import { getUniqueValuesByKey } from '@/utils/helpers';
 import styles from './musicianModalWin.module.css';
-// import { useAppSelector } from '@/store/store';
 import { TrackType } from '@/sherdTypes/sheredTypes';
 
 interface PlaylistItemProps {
@@ -8,7 +7,6 @@ interface PlaylistItemProps {
 }
 
 export default function MusicianModalWin({tracks}: PlaylistItemProps) {
-  // const allTracks = useAppSelector((state) => state.tracks.allTracks);
   const ArrOfAuthor = getUniqueValuesByKey(tracks, 'author');
 
   return (

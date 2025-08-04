@@ -32,7 +32,7 @@
 
 
 .filter__button {
-  /*composes: btn-text from '/src/UI/Button/button.module.css';*/
+ 
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -53,34 +53,3 @@
   color: #B672FF;
 }
 
-/* .filter__index{
-  position: absolute;
-  font-size: 13px;
-  font-weight: 400;
-  color: white;
-  z-index: 2;
-  background-color: #AD61FF;
-  border-radius: 26px;
-  width: 26px;
-  height: 26px;
-  top: -8px;
-  left: 137px;
-padding-top: 1px;
-padding-left: 9px;
-}
-
-.filterGenre__index{
-  position: absolute;
-  font-size: 13px;
-  font-weight: 400;
-  color: white;
-  z-index: 2;
-  background-color: #AD61FF;
-  border-radius: 26px;
-  width: 26px;
-  height: 26px;
-  top: -8px;
-  left: 80px;
-padding-top: 1px;
-padding-left: 9px;
-} */

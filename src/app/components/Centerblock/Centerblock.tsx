@@ -4,17 +4,57 @@ import styles from './centerblock.module.css';
 import Filter from '../Filter/Filter';
 
 import PlaylistItem from '../PlaylistItem/PlaylistItem';
-import { useAppDispatch } from '@/store/store';
+import { useAppDispatch, useAppSelector } from '@/store/store';
 import { useEffect, useState } from 'react';
-import { fetchMusic } from '@/api';
-import { setAllTracks } from '@/store/features/trackSlice';
+import { favoriteTracks, fetchMusic } from '@/api';
+import { setAllTracks, setFavoriteTracks } from '@/store/features/trackSlice';
 import { TrackType } from '@/sherdTypes/sheredTypes';
+import { withReauth } from '@/utils/withReauth';
+import { AxiosError } from 'axios';
+import { Search } from '../Search/Search';
 
 export default function Centerblock() {
   const dispatch = useAppDispatch();
+
   const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
-  const [tracks, setTracks] = useState<TrackType[]>([])
+  const [error, setError] = useState('');
+
+  const [tracks, setTracks] = useState<TrackType[]>([]);
+
+  const accessToken = useAppSelector((state) => state.auth.access);
+  const refreshT = useAppSelector((state) => state.auth.refresh);
+
+  useEffect(() => {
+    if (!refreshT || refreshT === '') {
+      return;
+    }
+
+    const fetchFavoriteTracks = async () => {
+
+      try {
+        const favorite = await withReauth(
+          (newToken) => favoriteTracks(newToken || accessToken),
+          refreshT,
+          dispatch,
+        );
+        dispatch(setFavoriteTracks(favorite.data));
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          if (error.response) {
+            setError(error.response.data.message);
+          } else if (error.request) {
+            setError('отсутствует интернет, попробуйте позже');
+          } else {
+            setError('неизвестная, попробуйте позже');
+          }
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchFavoriteTracks();
+  }, [refreshT, dispatch]);
 
   useEffect(() => {
     const loadTracks = async () => {
@@ -22,10 +62,18 @@ export default function Centerblock() {
       try {
         const tracks = await fetchMusic();
         dispatch(setAllTracks(tracks));
-        setTracks(tracks)
+
+        setTracks(tracks);
       } catch (error) {
-        setIsError(true);
-        console.error('Не удалось загрузить треки', error);
+        if (error instanceof AxiosError) {
+          if (error.response) {
+            setError(error.response.data.message);
+          } else if (error.request) {
+            setError('отсутствует интернет, попробуйте позже');
+          } else {
+            setError('неизвестная, попробуйте позже');
+          }
+        }
       } finally {
         setIsLoading(false);
       }
@@ -36,19 +84,9 @@ export default function Centerblock() {
 
   return (
     <div className={styles.centerblock}>
-      <div className={styles.centerblock__search}>
-        <svg className={styles.search__svg}>
-          <use xlinkHref="/img/icon/sprite.svg#icon-search"></use>
-        </svg>
-        <input
-          className={styles.search__text}
-          type="search"
-          placeholder="Поиск"
-          name="search"
-        />
-      </div>
+      <Search tracks={tracks} setTracks={setTracks} />
       <h2 className={styles.centerblock__h2}>Треки</h2>
-      <Filter tracks={tracks}/>
+      <Filter tracks={tracks} />
       <div className={styles.centerblock__content}>
         <div className={styles.content__title}>
           <div className={classNames(styles.playlistTitle__col, styles.col01)}>
@@ -68,12 +106,8 @@ export default function Centerblock() {
         </div>
         <div className={styles.content__playlist}>
           {isLoading && <p className={styles.loading}>Загрузка...</p>}
-          {isError && (
-            <p className={styles.error}>
-              Ошибка при загрузке треков, попробуйте перезагрузить
-            </p>
-          )}
-          <PlaylistItem tracks={tracks}/>
+          {error && <p className={styles.error}>{error}</p>}
+          <PlaylistItem tracks={tracks} />
         </div>
       </div>
     </div>
