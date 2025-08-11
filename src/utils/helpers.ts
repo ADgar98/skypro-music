@@ -23,7 +23,7 @@ export function getUniqueValuesByKey(
 }
 
 export const formatTime = (seconds: number): string => {
-  const totalSeconds = Math.floor(seconds); // обрезаем дробную часть
+  const totalSeconds = Math.floor(seconds); 
   const mins = Math.floor(totalSeconds / 60);
   const secs = totalSeconds % 60;
   return `${mins}:${secs < 10 ? '0' : ''}${secs}`;

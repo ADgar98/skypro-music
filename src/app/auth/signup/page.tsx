@@ -32,8 +32,6 @@ export default function SignUp() {
     setTestPassword(e.target.value);
   };
 
-  console.log(formData);
-
   const onSubmit = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {

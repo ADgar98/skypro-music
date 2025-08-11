@@ -3,17 +3,19 @@ import Image from "next/image";
 import Link from "next/link";
 import styles from "./mainSidebar.module.css";
 import { useAppDispatch, useAppSelector } from "@/store/store";
-import { setUserInfo } from "@/store/features/trackSlice";
+import { clearLS} from "@/store/features/authSlice";
+
 export default function MainSidebar() {
   const dispatch = useAppDispatch();
-  const userInfo = useAppSelector((state) => state.tracks.userData);
+  const userInfo = useAppSelector((state) => state.auth.username);
+  const logOut = () => {
+    dispatch(clearLS())
+  }
     return(
         <div className={styles.main__sidebar}>
             <div className={styles.sidebar__personal}>
-              <p className={styles.sidebar__personalName}>{userInfo?.username}</p>
-              <div onClick={() => {
-                dispatch(setUserInfo(null))
-              }} className={styles.sidebar__icon}>
+              <p className={styles.sidebar__personalName}>{userInfo || 'Гость'}</p>
+              <div onClick={logOut} className={styles.sidebar__icon}>
                 <svg>
                   <use xlinkHref="/img/icon/sprite.svg#logout"></use>
                 </svg>

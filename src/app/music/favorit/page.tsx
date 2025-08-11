@@ -2,89 +2,73 @@
 
 import Filter from '@/app/components/Filter/Filter';
 import styles from './page.module.css';
-import { useParams } from 'next/navigation';
+
 import classNames from 'classnames';
 import PlaylistItem from '@/app/components/PlaylistItem/PlaylistItem';
 import { useEffect, useState } from 'react';
-import { fetchCategoryMusic, fetchMusic } from '@/api';
+import { favoriteTracks } from '@/api';
 
-import { TrackType } from '@/sherdTypes/sheredTypes';
 import { AxiosError } from 'axios';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+
+import { withReauth } from '@/utils/withReauth';
+import { setFavoriteTracks } from '@/store/features/trackSlice';
 import { useInitAuth } from '@/hooks/useInitAuth';
-import { useAppSelector } from '@/store/store';
+import { TrackType } from '@/sherdTypes/sheredTypes';
 
 export default function CategoryPage() {
   useInitAuth();
 
-  const params = useParams<{ id: string }>();
-  const [tracks, setTracks] = useState<TrackType[]>([]);
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useAppDispatch();
+  const accessToken = useAppSelector((state) => state.auth.access);
+  const refresh = useAppSelector((state) => state.auth.refresh);
+const [tracks, setTracks] = useState<TrackType[]>([]);
+  
   const [pagePlaylist, setPagePlaylist] = useState<TrackType[]>([]);
-  const [filteredPlaylist, setFilteredPlaylist] = useState<TrackType[]>([]);
-  const filteredAuthors = useAppSelector(
-    (state) => state.tracks.filters.authors,
-  );
-  const filtredGeners = useAppSelector((state) => state.tracks.filters.genres);
-  const filtredYears = useAppSelector((state) => state.tracks.filters.years);
-
-  let playlistName;
-
-  switch (params.id) {
-    case '1':
-      playlistName = 'Плейлист дня';
-      break;
-    case '2':
-      playlistName = '100 танцевальных хитов';
-      break;
-    case '3':
-      playlistName = 'Инди-заряд';
-      break;
-    case '4':
-      playlistName = 'Мой плейлист';
-      break;
-    default:
-      alert('Нет таких значений');
-  }
+    const [filteredPlaylist, setFilteredPlaylist] = useState<TrackType[]>([]);
+    const filteredAuthors = useAppSelector(
+      (state) => state.tracks.filters.authors,
+    );
+    const filtredGeners = useAppSelector((state) => state.tracks.filters.genres);
+    const filtredYears = useAppSelector((state) => state.tracks.filters.years);
 
   useEffect(() => {
-    if (params.id) {
-      const categoryId = String(Number(params.id) + 1);
-
-      const loadData = async () => {
-        setIsLoading(true);
-        try {
-          const [categoryData, tracksData] = await Promise.all([
-            fetchCategoryMusic(categoryId),
-            fetchMusic(),
-          ]);
-
-          const items = categoryData.data.items.map(Number);
-
-          const filtered = tracksData.filter((track: TrackType) =>
-            items.includes(Number(track._id)),
-          );
-          setTracks(filtered);
-          setPagePlaylist(filtered);
-        } catch (error) {
-          if (error instanceof AxiosError) {
-            if (error.response) {
-              setError(error.response.data.message);
-            } else if (error.request) {
-              setError('отсутствует интернет, попробуйте позже');
-            } else {
-              setError('неизвестная, попробуйте позже');
-            }
-          }
-        } finally {
-          setIsLoading(false);
-        }
-      };
-      loadData();
+    if (!refresh || refresh === '') {
+      return;
     }
-  }, []);
 
-  useEffect(() => {
+    const fetchFavoriteTracks = async () => {
+      setIsLoading(true);
+      try {
+        const favorite = await withReauth(
+          (newToken) => favoriteTracks(newToken || accessToken),
+          refresh,
+          dispatch,
+        );
+        dispatch(setFavoriteTracks(favorite.data));
+        setTracks(favorite.data);
+        setPagePlaylist(favorite.data)
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          if (error.response) {
+            setError(error.response.data.message);
+          } else if (error.request) {
+            setError('отсутствует интернет, попробуйте позже');
+          } else {
+            setError('неизвестная, попробуйте позже');
+          }
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchFavoriteTracks();
+  }, [refresh, dispatch]);
+
+    useEffect(() => {
     let currentPlaylist;
     if (filteredAuthors.length > 0 && filtredGeners.length > 0) {
       const authorFilterPlaylist = pagePlaylist.filter((track) => {
@@ -145,7 +129,7 @@ export default function CategoryPage() {
           name="search"
         />
       </div>
-      <h2 className={styles.centerblock__h2}>{playlistName}</h2>
+      <h2 className={styles.centerblock__h2}>Мои треки</h2>
       <Filter tracks={pagePlaylist} />
       <div className={styles.centerblock__content}>
         <div className={styles.content__title}>

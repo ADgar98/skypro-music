@@ -90,8 +90,6 @@
   color: #ffffff;
 }
 
-
-
 .centerblock__content {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -118,7 +116,6 @@
   justify-content: space-between;
   margin-bottom: 24px;
 }
-
 
 .playlistTitle__col {
   font-style: normal;
@@ -164,17 +161,16 @@
   flex-direction: column;
   overflow-y: auto;
   max-height: calc(100vh - 407px);
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 .content__playlist::-webkit-scrollbar {
-  display: none; /* Chrome, Edge, Safari */
+  display: none;
 }
 
-.loading{
+.loading {
   color: white;
 }
-.error{
+.error {
   color: white;
 }
-
