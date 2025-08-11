@@ -8,6 +8,12 @@ type initialStateType = {
   isPlay: boolean;
   isShuffle: boolean;
   favoriteTracks: TrackType[];
+  pagePlaylist: TrackType[];
+  filters: {
+    authors: string[];
+    genres: string[];
+    years: string;
+  };
 };
 
 const initialState: initialStateType = {
@@ -17,6 +23,12 @@ const initialState: initialStateType = {
   isShuffle: false,
   shuffledPlaylist: [],
   favoriteTracks: [],
+  pagePlaylist: [],
+  filters: {
+    authors: [],
+    genres: [],
+    years: 'По умолчанию',
+  },
 };
 
 const trackSlice = createSlice({
@@ -38,13 +50,15 @@ const trackSlice = createSlice({
     },
 
     addLikedTracks: (state, action: PayloadAction<TrackType>) => {
-      state.favoriteTracks = [...state.favoriteTracks, action.payload]
+      state.favoriteTracks = [...state.favoriteTracks, action.payload];
     },
 
     removeLikedTracks(state, action: PayloadAction<TrackType>) {
-      const index = state.favoriteTracks.findIndex(track => track._id === action.payload._id);
+      const index = state.favoriteTracks.findIndex(
+        (track) => track._id === action.payload._id,
+      );
       if (index !== -1) {
-        state.favoriteTracks.splice(index, 1); 
+        state.favoriteTracks.splice(index, 1);
       }
     },
 
@@ -87,6 +101,39 @@ const trackSlice = createSlice({
         state.currentTrack = allPLaylist[nextTrackIndex];
       }
     },
+    setPagePlaylist: (state, action: PayloadAction<TrackType[]>) => {
+      state.pagePlaylist = action.payload;
+    },
+
+    setFilterAuthors: (state, action: PayloadAction<string>) => {
+      const author = action.payload;
+      if (state.filters.authors.includes(author)) {
+        state.filters.authors = state.filters.authors.filter((el) => {
+          return el !== author;
+        });
+      } else {
+        state.filters.authors = [...state.filters.authors, author];
+      }
+    },
+
+    setFilterGenres: (state, action: PayloadAction<string>) => {
+      const genres = action.payload;
+      if (state.filters.genres.includes(genres)) {
+        state.filters.genres = state.filters.genres.filter((el) => {
+          return el !== genres;
+        });
+      } else {
+        state.filters.genres = [...state.filters.genres, genres];
+      }
+    },
+    setFilterYears: (state, action: PayloadAction<string>) => {
+      const date = action.payload;
+      if (state.filters.years === date) {
+        state.filters.years = 'По умолчанию'
+      } else {
+        state.filters.years = action.payload
+      }
+    },
   },
 });
 
@@ -100,5 +147,9 @@ export const {
   setFavoriteTracks,
   addLikedTracks,
   removeLikedTracks,
+  setPagePlaylist,
+  setFilterAuthors,
+  setFilterGenres,
+  setFilterYears,
 } = trackSlice.actions;
 export const trackSliceReducer = trackSlice.reducer;

@@ -32,7 +32,7 @@
 
 
 .filter__button {
- 
+ position: relative;
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -53,3 +53,17 @@
   color: #B672FF;
 }
 
+.numberOfFilters{
+  position: absolute;
+  top: -13px;
+  right: -10px;
+  border: 1px solid #AD61FF;
+  background-color: #AD61FF;
+ height: 26px;
+ width: 26px;
+ padding-left: 8px;
+ padding-right: 8px;
+ font-size: 13px;
+  border-radius: 16px;
+  color: #FFFFFF;
+}

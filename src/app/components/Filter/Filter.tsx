@@ -5,6 +5,8 @@ import styles from './filter.module.css';
 import DateFilterModWin from '../DateFilterModWin/DateFilterModWin';
 import GenreFilterModWin from '../GenreFilterModWin/GenreFilterModWin';
 import { TrackType } from '@/sherdTypes/sheredTypes';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+import { setFilterAuthors, setFilterGenres} from '@/store/features/trackSlice';
 
 interface PlaylistItemProps {
   tracks: TrackType[];
@@ -14,6 +16,20 @@ export default function Filter({ tracks }: PlaylistItemProps) {
   const [musicianWin, setMusicianWin] = useState<boolean>(false);
   const [dateWin, setDateWin] = useState<boolean>(false);
   const [genreWin, setGenreWin] = useState<boolean>(false);
+const dispatch = useAppDispatch();
+  const filteredAuthors = useAppSelector((state) => state.tracks.filters.authors);
+  const filteredGenres = useAppSelector((state) => state.tracks.filters.genres);
+const filteredYears = useAppSelector((state) => state.tracks.filters.years);
+
+
+const onSelectedAuthor = (author: string) => {
+  dispatch(setFilterAuthors(author))
+}
+
+const onSelectedGener = (gener: string) => {
+  dispatch(setFilterGenres(gener))
+}
+
   const openMusicianWin = () => {
     setMusicianWin((prev) => !prev);
     setDateWin(false);
@@ -39,12 +55,13 @@ export default function Filter({ tracks }: PlaylistItemProps) {
         <div
           onClick={openMusicianWin}
           data-active={musicianWin}
-          className={`${styles.filter__button} ${musicianWin ? styles.active : ''}`}
+          className={`${styles.filter__button} ${musicianWin || filteredAuthors.length ? styles.active : ''}`}
         >
           исполнителю
+          {filteredAuthors.length > 0 && (<span className={styles.numberOfFilters}>{filteredAuthors.length}</span>)}
         </div>
         <div className={styles.filterbox}>
-          {musicianWin && <MusicianModalWin tracks={tracks} />}
+          {musicianWin && <MusicianModalWin onSelect={onSelectedAuthor} tracks={tracks} />}
         </div>
       </div>
 
@@ -52,7 +69,7 @@ export default function Filter({ tracks }: PlaylistItemProps) {
         <div
           onClick={openDateWin}
           data-active={dateWin}
-          className={`${styles.filter__button} ${dateWin ? styles.active : ''}`}
+          className={`${styles.filter__button} ${dateWin || filteredYears !== 'По умолчанию' ? styles.active : ''}`}
         >
           году выпуска
         </div>
@@ -64,12 +81,13 @@ export default function Filter({ tracks }: PlaylistItemProps) {
         <div
           onClick={openGenreWin}
           data-active={genreWin}
-          className={`${styles.filter__button} ${genreWin ? styles.active : ''}`}
+          className={`${styles.filter__button} ${genreWin || filteredGenres.length ? styles.active : ''}`}
         >
           жанру
+          {filteredGenres.length > 0 && (<span className={styles.numberOfFilters}>{filteredGenres.length}</span>)}
         </div>
         <div className={styles.filterbox}>
-          {genreWin && <GenreFilterModWin tracks={tracks} />}
+          {genreWin && <GenreFilterModWin onSelect={onSelectedGener} tracks={tracks} />}
         </div>
       </div>
     </div>

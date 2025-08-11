@@ -11,13 +11,22 @@ import { fetchCategoryMusic, fetchMusic } from '@/api';
 import { TrackType } from '@/sherdTypes/sheredTypes';
 import { AxiosError } from 'axios';
 import { useInitAuth } from '@/hooks/useInitAuth';
+import { useAppSelector } from '@/store/store';
 
 export default function CategoryPage() {
   useInitAuth();
+
   const params = useParams<{ id: string }>();
   const [tracks, setTracks] = useState<TrackType[]>([]);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [pagePlaylist, setPagePlaylist] = useState<TrackType[]>([]);
+  const [filteredPlaylist, setFilteredPlaylist] = useState<TrackType[]>([]);
+  const filteredAuthors = useAppSelector(
+    (state) => state.tracks.filters.authors,
+  );
+  const filtredGeners = useAppSelector((state) => state.tracks.filters.genres);
+  const filtredYears = useAppSelector((state) => state.tracks.filters.years);
 
   let playlistName;
 
@@ -56,6 +65,7 @@ export default function CategoryPage() {
             items.includes(Number(track._id)),
           );
           setTracks(filtered);
+          setPagePlaylist(filtered);
         } catch (error) {
           if (error instanceof AxiosError) {
             if (error.response) {
@@ -74,6 +84,54 @@ export default function CategoryPage() {
     }
   }, []);
 
+  useEffect(() => {
+    let currentPlaylist;
+    if (filteredAuthors.length > 0 && filtredGeners.length > 0) {
+      const authorFilterPlaylist = pagePlaylist.filter((track) => {
+        return filteredAuthors.includes(track.author);
+      });
+      currentPlaylist = authorFilterPlaylist.filter((track) => {
+        return filtredGeners.some((el) => track.genre.includes(el));
+      });
+      setTracks(currentPlaylist);
+    } else if (filteredAuthors.length > 0) {
+      currentPlaylist = pagePlaylist.filter((track) => {
+        return filteredAuthors.includes(track.author);
+      });
+      setTracks(currentPlaylist);
+    } else if (filtredGeners.length > 0) {
+      currentPlaylist = pagePlaylist.filter((track) => {
+        return filtredGeners.some((el) => track.genre.includes(el));
+      });
+      setTracks(currentPlaylist);
+    } else {
+      setTracks(pagePlaylist);
+    }
+    if (currentPlaylist) {
+      setFilteredPlaylist(currentPlaylist);
+    }
+  }, [filteredAuthors, filtredGeners]);
+
+  useEffect(() => {
+    if (filtredYears === 'Сначала новые') {
+      const sortedDesc = [...tracks].sort(
+        (a, b) =>
+          new Date(b.release_date).getTime() -
+          new Date(a.release_date).getTime(),
+      );
+      setTracks(sortedDesc);
+    } else if (filtredYears === 'Сначала старые') {
+      const sortedDesc = [...tracks].sort(
+        (a, b) =>
+          new Date(a.release_date).getTime() -
+          new Date(b.release_date).getTime(),
+      );
+      setTracks(sortedDesc);
+    } else {
+      setTracks(filteredPlaylist);
+    }
+  }, [filtredYears]);
+
   return (
     <div className={styles.centerblock}>
       <div className={styles.centerblock__search}>
@@ -88,7 +146,7 @@ export default function CategoryPage() {
         />
       </div>
       <h2 className={styles.centerblock__h2}>{playlistName}</h2>
-      <Filter tracks={tracks} />
+      <Filter tracks={pagePlaylist} />
       <div className={styles.centerblock__content}>
         <div className={styles.content__title}>
           <div className={classNames(styles.playlistTitle__col, styles.col01)}>
